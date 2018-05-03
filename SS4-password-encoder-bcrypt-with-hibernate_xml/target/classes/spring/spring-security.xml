@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:s="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<s:http auto-config="true"  >
+	
+		<!-- 配置，权限不足时访问页面的错误页面提示，不配置，会报403错误 -->
+		<s:access-denied-handler error-page="/Access_Denied"/>
+		
+		<s:intercept-url pattern="/" access="permitAll" />
+		<s:intercept-url pattern="/home" access="permitAll" />
+		<s:intercept-url pattern="/Access_Denied" access="permitAll" />
+		<s:intercept-url pattern="/admin**" access="hasRole('ADMIN')"/>
+		<s:intercept-url pattern="/db**" access="hasRole('ADMIN') and hasRole('DBA')"/>
+		<s:intercept-url pattern="/newUser**" access="hasRole('ADMIN') and hasRole('DBA')"/>
+		<s:form-login   login-page="/login"  
+						username-parameter="ssoId"  
+						password-parameter="password"  
+						authentication-failure-url="/Access_Denied" />
+		<s:csrf/>
+	</s:http>
+	
+	<s:authentication-manager>
+		<s:authentication-provider user-service-ref="customUserDetailsService" >
+			<s:password-encoder ref="bcryptPasswordEncoder" />
+		</s:authentication-provider>
+	</s:authentication-manager>
+	
+	<!-- security的加密 -->
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	
+	
+	<!-- 自定义的用户查询 -->
+	<bean id="customUserDetailsService" class="com.me.springsecurity.service.CustomUserDetailsService"/>
+
+</beans>
