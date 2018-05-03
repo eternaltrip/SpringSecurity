@@ -1,0 +1,90 @@
+/*系统用户表*/
+create table APP_USER (
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   sso_id VARCHAR(30) NOT NULL,
+   password VARCHAR(100) NOT NULL,
+   first_name VARCHAR(30) NOT NULL,
+   last_name  VARCHAR(30) NOT NULL,
+   email VARCHAR(30) NOT NULL,
+   PRIMARY KEY (id),
+   UNIQUE (sso_id)
+);
+   
+/*系统角色表*/
+create table USER_PROFILE(
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   type VARCHAR(30) NOT NULL,
+   PRIMARY KEY (id),
+   UNIQUE (type)
+);
+   
+/*系统角色-用户表*/
+CREATE TABLE APP_USER_USER_PROFILE (
+    user_id BIGINT NOT NULL,
+    user_profile_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, user_profile_id),
+    CONSTRAINT FK_APP_USER FOREIGN KEY (user_id) REFERENCES APP_USER (id),
+    CONSTRAINT FK_USER_PROFILE FOREIGN KEY (user_profile_id) REFERENCES USER_PROFILE (id)
+);
+
+/*系统权限表*/
+CREATE TABLE SYS_PERMISSION (
+	id   BIGINT NOT NULL,
+	name  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL  ,
+	descritpion  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL  ,
+	url  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+	pid  int(11) NULL DEFAULT NULL  ,
+PRIMARY KEY (id)
+)
+
+/*系统权限-角色表*/
+CREATE TABLE SYS_PERMISSION_PROFILE (
+Sys_profile_id  BIGINT NOT NULL,
+Sys_permission_id BIGINT NOT NULL,
+ PRIMARY KEY (
+	Sys_profile_id,
+	Sys_permission_id
+),
+ CONSTRAINT FK_PR_SYS_PERMISSION FOREIGN KEY (Sys_permission_id) REFERENCES SYS_PERMISSION (id),
+ CONSTRAINT FK_PR_USER_PROFILE FOREIGN KEY (Sys_profile_id) REFERENCES USER_PROFILE (id)
+)
+
+/*remember-me token值表*/
+CREATE TABLE PERSISTENT_LOGINS (
+    username VARCHAR(64) NOT NULL,
+    series VARCHAR(64) NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    last_used TIMESTAMP NOT NULL,
+    PRIMARY KEY (series)
+);
+
+
+  
+/* Populate USER_PROFILE Table */
+INSERT INTO USER_PROFILE(type)
+VALUES ('USER');
+  
+INSERT INTO USER_PROFILE(type)
+VALUES ('ADMIN');
+  
+INSERT INTO USER_PROFILE(type)
+VALUES ('DBA');
+  
+  
+/* Populate one Admin User  with username 'sam' and password 'abc125' which will further create other users for the application */
+INSERT INTO APP_USER(sso_id, password, first_name, last_name, email)
+VALUES ('sam','$2a$10$4eqIF5s/ewJwHK1p8lqlFOEm2QIA0S8g6./Lok.pQxqcxaBZYChRm', 'Sam','Smith','samy@xyz.com');
+  
+  
+/* Populate JOIN Table */
+INSERT INTO APP_USER_USER_PROFILE (user_id, user_profile_id)
+  SELECT user.id, profile.id FROM app_user user, user_profile profile
+  where user.sso_id='sam' and profile.type='ADMIN';
+ 
+ BEGIN;
+INSERT INTO SYS_PERMISSION VALUES ('1', 'ROLE_DBA', 'dba', '/dba', null), ('2', 'ROLE_ADMIN', 'admin', '/admin', null);
+COMMIT;
+
+BEGIN;
+INSERT INTO SYS_PERMISSION_PROFILE VALUES ( '1', '1'), ( '1', '2'), ('2', '1');
+COMMIT;
