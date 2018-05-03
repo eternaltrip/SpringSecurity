@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="SS4-method-security-using-preauthorize-postauthorize-secured-el">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resoures"/>
+        <property name="context-root" value="SS4-method-security-using-preauthorize-postauthorize-secured-el"/>
+        <property name="java-output-path" value="/SS4-method-security-using-preauthorize-postauthorize-secured-el/target/classes"/>
+    </wb-module>
+</project-modules>
