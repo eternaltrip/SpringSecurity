@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:s="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<s:http auto-config="true">
+		<s:intercept-url pattern="/" access="permitAll" />
+		<s:intercept-url pattern="/home" access="permitAll" />
+		<s:intercept-url pattern="/admin**" access="hasRole('ADMIN')"/>
+		<s:intercept-url pattern="/db**" access="hasRole('ADMIN') and hasRole('DBA')"/>
+		<s:form-login   login-page="/login"  
+						username-parameter="ssoId"  
+						password-parameter="password"  
+						authentication-failure-url="/Access_Denied" />
+		<s:csrf/>
+	</s:http>
+	
+	<s:authentication-manager>
+		<s:authentication-provider user-service-ref="customUserDetailsService" />
+	</s:authentication-manager>
+	
+	
+	<bean id="customUserDetailsService" class="com.me.springsecurity.service.CustomUserDetailsService"/>
+
+</beans>
