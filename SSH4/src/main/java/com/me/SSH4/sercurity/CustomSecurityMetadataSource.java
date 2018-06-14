@@ -17,7 +17,6 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.me.SSH4.dao.SysPermissionDao;
 import com.me.SSH4.modal.SysPermission;
@@ -37,7 +36,7 @@ import com.me.SSH4.modal.SysUserProfile;
 public class CustomSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
 	@Autowired
-	private	SysPermissionDao sysPermissionDao;
+	private SysPermissionDao sysPermissionDao;
 	Map<String , Collection<ConfigAttribute>> config = new HashMap<>();
 	
 	/**
@@ -57,7 +56,7 @@ public class CustomSecurityMetadataSource implements FilterInvocationSecurityMet
 
 	
 	/**
-	 * 获取当前url需要的角色
+	 * 获取当前url需要的角色(权限)
 	 * @param object
 	 */
 	private Collection<ConfigAttribute> getMatcherConfigAttribute(HttpServletRequest request ) {

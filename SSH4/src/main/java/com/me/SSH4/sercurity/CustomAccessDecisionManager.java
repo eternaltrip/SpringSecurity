@@ -45,6 +45,8 @@ public class CustomAccessDecisionManager implements AccessDecisionManager{
 		
 		List<String> urlRoles = configAttributes.stream().map(ConfigAttribute :: getAttribute).collect(Collectors.toList());
 		
+
+		
 		for (String urlRole : urlRoles) {
 			if(userRoles.contains(urlRole)) {
 				return;
@@ -54,12 +56,18 @@ public class CustomAccessDecisionManager implements AccessDecisionManager{
 		throw new AccessDeniedException("no right access");
 	}
 
+	
+	/**
+	 * 判断AccessDecisionManager是否支持传递的ConfigAttribute。
+	 */
 	@Override
 	public boolean supports(ConfigAttribute attribute) {
-		
 		return true;
 	}
 
+	/**
+	 * 判断是否支持"目标资源对象"的类型。
+	 */
 	@Override
 	public boolean supports(Class<?> clazz) {
 		

@@ -21,7 +21,7 @@ import javax.persistence.JoinColumn;
 
 
 @Entity  
-@Table(name="APP_USER")  
+@Table(name="SYS_USER")  
 public class SysUser  implements Serializable{
 	
 
@@ -52,7 +52,7 @@ public class SysUser  implements Serializable{
 
 	@NotEmpty
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APP_USER_USER_PROFILE", 
+	@JoinTable(name = "SYS_USER_PROFILE", 
              joinColumns = { @JoinColumn(name = "USER_ID") }, 
              inverseJoinColumns = { @JoinColumn(name = "USER_PROFILE_ID") })
 	private Set<SysUserProfile> userProfiles = new HashSet<SysUserProfile>();

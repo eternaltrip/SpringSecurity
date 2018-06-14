@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  */
 @Entity
-@Table(name = "USER_PROFILE")
+@Table(name = "SYS_PROFILE")
 public class SysUserProfile  implements Serializable{
 
 	private static final long serialVersionUID = 8282046624951976539L;
