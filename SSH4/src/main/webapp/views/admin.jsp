@@ -14,13 +14,13 @@
         Dear <strong>${user}</strong>, Welcome to Admin Page.
         <br/>
         <sec:authorize access="isFullyAuthenticated()">  
-	        <label><a href="#">Create New User</a> | <a href="#">View existing Users</a></label>  
+	        <label><a href="<c:url value='/newuser' />">Create New User</a> | <a href="<c:url value='/' />">View existing Users</a></label>  
 	    </sec:authorize>  
 	    <sec:authorize access="isRememberMe()">  
-	        <label><a href="#">View existing Users</a></label>  
+	        <label><a href="/list">View existing Users</a></label>  
 	    </sec:authorize> 
         
-        Would you like to <a href="<c:url value='/newUser' />">Add Some Users</a> to keep yourself busy?
+        Would you like to <a href="<c:url value='/newuser' />">Add Some Users</a> to keep yourself busy?
         <br/>
         <a href="<c:url value="/logout" />">Logout</a>
     </div>

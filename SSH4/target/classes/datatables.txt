@@ -1,90 +1,132 @@
-/*系统用户表*/
-create table APP_USER (
-   id BIGINT NOT NULL AUTO_INCREMENT,
-   sso_id VARCHAR(30) NOT NULL,
-   password VARCHAR(100) NOT NULL,
-   first_name VARCHAR(30) NOT NULL,
-   last_name  VARCHAR(30) NOT NULL,
-   email VARCHAR(30) NOT NULL,
-   PRIMARY KEY (id),
-   UNIQUE (sso_id)
-);
-   
-/*系统角色表*/
-create table USER_PROFILE(
-   id BIGINT NOT NULL AUTO_INCREMENT,
-   type VARCHAR(30) NOT NULL,
-   PRIMARY KEY (id),
-   UNIQUE (type)
-);
-   
-/*系统角色-用户表*/
-CREATE TABLE APP_USER_USER_PROFILE (
-    user_id BIGINT NOT NULL,
-    user_profile_id BIGINT NOT NULL,
-    PRIMARY KEY (user_id, user_profile_id),
-    CONSTRAINT FK_APP_USER FOREIGN KEY (user_id) REFERENCES APP_USER (id),
-    CONSTRAINT FK_USER_PROFILE FOREIGN KEY (user_profile_id) REFERENCES USER_PROFILE (id)
-);
+/*
+ Navicat MySQL Data Transfer
 
-/*系统权限表*/
-CREATE TABLE SYS_PERMISSION (
-	id   BIGINT NOT NULL,
-	name  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL  ,
-	descritpion  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL  ,
-	url  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-	pid  int(11) NULL DEFAULT NULL  ,
-PRIMARY KEY (id)
-)
+ Source Server         : localhost
+ Source Server Type    : MySQL
+ Source Server Version : 80011
+ Source Host           : localhost:3306
+ Source Schema         : test4
 
-/*系统权限-角色表*/
-CREATE TABLE SYS_PERMISSION_PROFILE (
-Sys_profile_id  BIGINT NOT NULL,
-Sys_permission_id BIGINT NOT NULL,
- PRIMARY KEY (
-	Sys_profile_id,
-	Sys_permission_id
-),
- CONSTRAINT FK_PR_SYS_PERMISSION FOREIGN KEY (Sys_permission_id) REFERENCES SYS_PERMISSION (id),
- CONSTRAINT FK_PR_USER_PROFILE FOREIGN KEY (Sys_profile_id) REFERENCES USER_PROFILE (id)
-)
+ Target Server Type    : MySQL
+ Target Server Version : 80011
+ File Encoding         : 65001
 
-/*remember-me token值表*/
-CREATE TABLE PERSISTENT_LOGINS (
-    username VARCHAR(64) NOT NULL,
-    series VARCHAR(64) NOT NULL,
-    token VARCHAR(64) NOT NULL,
-    last_used TIMESTAMP NOT NULL,
-    PRIMARY KEY (series)
-);
+ Date: 13/06/2018 11:48:16
+*/
 
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
-  
-/* Populate USER_PROFILE Table */
-INSERT INTO USER_PROFILE(type)
-VALUES ('USER');
-  
-INSERT INTO USER_PROFILE(type)
-VALUES ('ADMIN');
-  
-INSERT INTO USER_PROFILE(type)
-VALUES ('DBA');
-  
-  
-/* Populate one Admin User  with username 'sam' and password 'abc125' which will further create other users for the application */
-INSERT INTO APP_USER(sso_id, password, first_name, last_name, email)
-VALUES ('sam','$2a$10$4eqIF5s/ewJwHK1p8lqlFOEm2QIA0S8g6./Lok.pQxqcxaBZYChRm', 'Sam','Smith','samy@xyz.com');
-  
-  
-/* Populate JOIN Table */
-INSERT INTO APP_USER_USER_PROFILE (user_id, user_profile_id)
-  SELECT user.id, profile.id FROM app_user user, user_profile profile
-  where user.sso_id='sam' and profile.type='ADMIN';
- 
- BEGIN;
-INSERT INTO SYS_PERMISSION VALUES ('1', 'ROLE_DBA', 'dba', '/dba', null), ('2', 'ROLE_ADMIN', 'admin', '/admin', null);
-COMMIT;
+-- ----------------------------
+-- Table structure for persistent_logins
+-- ----------------------------
+DROP TABLE IF EXISTS `persistent_logins`;
+CREATE TABLE `persistent_logins`  (
+  `username` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `series` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `token` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `last_used` timestamp(0) NOT NULL,
+  PRIMARY KEY (`series`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
-BEGIN;
-INSERT INTO SYS_PERMISSION_PROFILE VALUES ( '1', '1'), ( '1', '2'), ('2', '1');
-COMMIT;
+-- ----------------------------
+-- Table structure for sys_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_permission`;
+CREATE TABLE `sys_permission`  (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `descritpion` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `pid` int(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_permission
+-- ----------------------------
+INSERT INTO `sys_permission` VALUES (1, 'ROLE_ADMIN', 'admin', '/admin', NULL);
+INSERT INTO `sys_permission` VALUES (2, 'ROLE_DBA', 'dba', '/db', NULL);
+INSERT INTO `sys_permission` VALUES (3, 'ROLE_USER', 'user', '/list', NULL);
+
+-- ----------------------------
+-- Table structure for sys_permission_profile
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_permission_profile`;
+CREATE TABLE `sys_permission_profile`  (
+  `Sys_profile_id` bigint(20) NOT NULL,
+  `Sys_permission_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`Sys_profile_id`, `Sys_permission_id`) USING BTREE,
+  INDEX `FK_PR_SYS_PERMISSION`(`Sys_permission_id`) USING BTREE,
+  CONSTRAINT `FK_PR_SYS_PERMISSION` FOREIGN KEY (`Sys_permission_id`) REFERENCES `sys_permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `FK_PR_USER_PROFILE` FOREIGN KEY (`Sys_profile_id`) REFERENCES `sys_profile` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_permission_profile
+-- ----------------------------
+INSERT INTO `sys_permission_profile` VALUES (1, 1);
+INSERT INTO `sys_permission_profile` VALUES (2, 1);
+INSERT INTO `sys_permission_profile` VALUES (2, 2);
+INSERT INTO `sys_permission_profile` VALUES (3, 3);
+
+-- ----------------------------
+-- Table structure for sys_profile
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_profile`;
+CREATE TABLE `sys_profile`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `type` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `type`(`type`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_profile
+-- ----------------------------
+INSERT INTO `sys_profile` VALUES (1, 'ADMIN');
+INSERT INTO `sys_profile` VALUES (2, 'DBA');
+INSERT INTO `sys_profile` VALUES (3, 'USER');
+
+-- ----------------------------
+-- Table structure for sys_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user`;
+CREATE TABLE `sys_user`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `sso_id` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `password` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `first_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `last_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `email` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `sso_id`(`sso_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_user
+-- ----------------------------
+INSERT INTO `sys_user` VALUES (1, 'admin', '$2a$10$/K.HLREPtiy3w/kaJiBUNeGnxpe/dTW2LNSMfK5JGIJ29nrEK6jx6', 'Sam', 'Smith', 'samy@xyz.com');
+INSERT INTO `sys_user` VALUES (3, 'yangjin', '$2a$10$la3fYCPXrj5sJBBZTZTq7.l6HFMeRwxAEEslel.Y.WW/m7qGBbtwu', 'yang', 'jin', 'eternal@gmail.com');
+
+-- ----------------------------
+-- Table structure for sys_user_profile
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user_profile`;
+CREATE TABLE `sys_user_profile`  (
+  `user_id` bigint(20) NOT NULL,
+  `user_profile_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`user_id`, `user_profile_id`) USING BTREE,
+  INDEX `FK_USER_PROFILE`(`user_profile_id`) USING BTREE,
+  CONSTRAINT `FK_APP_USER` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `FK_USER_PROFILE` FOREIGN KEY (`user_profile_id`) REFERENCES `sys_profile` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_user_profile
+-- ----------------------------
+INSERT INTO `sys_user_profile` VALUES (1, 1);
+INSERT INTO `sys_user_profile` VALUES (1, 2);
+INSERT INTO `sys_user_profile` VALUES (3, 3);
+
+SET FOREIGN_KEY_CHECKS = 1;
